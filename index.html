@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MFI Lead Hunter AI</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&display=swap"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css"><script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<style>
+:root{--bg:#edf0ea;--card:#fbfcfa;--tx:#16211b;--mu:#5d6b62;--bd:#d6dcd3;--ac:#0f766e;--act:#fff;--hot:#c8372d;--warm:#b8790a;--cold:#2f6397;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1713;--card:#17221c;--tx:#e6ede8;--mu:#97a69c;--bd:#2a3a31;--ac:#3fbfb2;--act:#0b1511;--hot:#ff7b6e;--warm:#e8b04a;--cold:#7fb0e6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1713;--card:#17221c;--tx:#e6ede8;--mu:#97a69c;--bd:#2a3a31;--ac:#3fbfb2;--act:#0b1511;--hot:#ff7b6e;--warm:#e8b04a;--cold:#7fb0e6;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;margin:0;letter-spacing:-.01em}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px 20px;border-bottom:1px solid var(--bd)}
+header h1{font-size:20px}nav{display:flex;gap:4px;margin-left:auto}
+nav button{background:none;border:0;color:var(--mu);padding:8px 14px;border-radius:8px;font:inherit;cursor:pointer}
+nav button[aria-current=true]{background:var(--ac);color:var(--act);font-weight:600}
+main{max-width:1100px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:16px}
+.g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+label{display:block;font-size:13px;color:var(--mu)}
+input,select,textarea{width:100%;margin-top:4px;padding:9px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+input[type=checkbox]{width:auto;margin:0 6px 0 0}
+.b{display:inline-block;padding:9px 16px;border-radius:8px;border:1px solid var(--ac);background:var(--ac);color:var(--act);font:inherit;font-weight:600;cursor:pointer;text-decoration:none}
+.b.s{background:none;color:var(--ac)}.b.d{background:none;border-color:var(--hot);color:var(--hot)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.mu{color:var(--mu);font-size:13px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--bd);text-align:left;vertical-align:top}th{font-size:13px;color:var(--mu);font-weight:600}
+tr[data-a=edit]{cursor:pointer}tr[data-a=edit]:hover{background:var(--bg)}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid currentColor}
+.q{color:var(--hot)}.m{color:var(--warm)}.f{color:var(--cold)}
+dialog{max-width:760px;width:calc(100% - 24px);border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.sc{font:700 40px "Bricolage Grotesque",system-ui,sans-serif}
+ul.r{margin:8px 0 0;padding-left:18px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:8px;display:none;z-index:9}
+@media(prefers-reduced-motion:no-preference){dialog[open]{animation:pop .15s ease-out}@keyframes pop{from{transform:translateY(6px);opacity:0}}}
+.bar{display:block;height:10px;background:var(--ac);border-radius:5px;min-width:4px}.kb{display:flex;gap:12px;overflow-x:auto;align-items:flex-start}.kc{min-width:230px;flex:1}.kc .card{padding:12px;margin:8px 0}.kn{font-weight:700;font-size:26px}:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style>
+</head>
+<body>
+<header><h1>MFI Lead Hunter AI</h1>
+<nav><button data-a="v" data-i="p">Prospectar</button><button data-a="v" data-i="l">Meus leads</button><button data-a="v" data-i="k">Pipeline</button><button data-a="v" data-i="d">Painel</button><button data-a="v" data-i="m">Mapa</button><button data-a="v" data-i="c">Pontuação</button></nav></header>
+<main id="app"></main>
+<datalist id="dl_s"><option value="Pizzarias"><option value="Restaurantes"><option value="Clínicas odontológicas"><option value="Barbearias"><option value="Salões de beleza"><option value="Academias"><option value="Oficinas mecânicas"><option value="Escritórios de advocacia"><option value="Imobiliárias"><option value="Padarias"><option value="Farmácias"><option value="Lanchonetes"></datalist><datalist id="dl_c"><option value="Sete Lagoas"><option value="Belo Horizonte"><option value="Contagem"><option value="Betim"><option value="Divinópolis"><option value="Montes Claros"><option value="Uberlândia"><option value="Juiz de Fora"><option value="Lisboa"><option value="Porto"><option value="Bruxelas"><option value="São Paulo"><option value="Rio de Janeiro"><option value="Curitiba"><option value="Porto Alegre"><option value="Salvador"><option value="Fortaleza"><option value="Recife"><option value="Brasília"><option value="Goiânia"><option value="Florianópolis"></datalist><datalist id="dl_e"><option value="MG"><option value="SP"><option value="RJ"><option value="ES"><option value="BA"><option value="GO"><option value="PR"><option value="SC"><option value="RS"><option value="DF"></datalist><datalist id="dl_f"><option value="Google Maps"><option value="Google"><option value="Instagram"><option value="Indicação"><option value="Pesquisa da Claude"><option value="Cadastro manual"></datalist><dialog id="dlg"></dialog><div id="toast" role="status"></div>
+<script>
+const $=s=>document.querySelector(s);
+const K='mfi_leads_v1',W0={nosite:30,problems:20,insta:10,profile:10,phone:10,quote:10,opp:10};
+let S={ai:'none',aik:'',aim:'',ol:'http://localhost:11434',gk:'',psik:''},leads=[],hist=[],w={...W0},view='p',Q={},F={t:'',c:'',k:'',n:false,f:false},cur=null;
+try{const s=JSON.parse(localStorage.getItem(K)||'{}');leads=s.leads||[];hist=s.hist||[];w={...W0,...(s.w||{})};S={...S,...(s.S||{})}}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify({leads,hist,w,S}))}catch(e){toast('Não foi possível salvar neste navegador.')}}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3500)}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const today=()=>new Date().toISOString().slice(0,10),uid=()=>Math.random().toString(36).slice(2,10);
+const key=l=>norm(l.nome)+'|'+(String(l.telefone||'').replace(/\D/g,'')||norm(l.cidade));
+const get=i=>leads.find(l=>l.id===i);
+const blank=()=>({id:uid(),nome:'',segmento:Q.seg||'',cidade:Q.cid||'',estado:Q.est||'',telefone:'',siteUrl:'',site:'unknown',instaUrl:'',insta:'unknown',profile:false,quote:'unknown',opp:0,fonte:'Cadastro manual',data:today(),notas:'',fav:false,nc:false,ncm:'',etapa:'Novo lead',lembrete:'',bio:'',aud:{}});
+
+const AUD=[['https','Segurança (HTTPS)'],['mobile','Visualização no celular'],['wpp','Botão de WhatsApp'],['form','Formulário de orçamento'],['meta','Título e descrição para o Google'],['serv','Apresentação dos serviços'],['vis','Visual do site']];const ETAPAS=['Novo lead','Em análise','Qualificado','Contato realizado','Aguardando resposta','Em negociação','Cliente fechado','Perdido'];const NL=String.fromCharCode(10);
+function score(l){let n=0;const r=[];const add=(p,t)=>{if(p>0){n+=p;r.push('+'+p+' '+t)}};
+ if(l.site==='none')add(w.nosite,'Sem site, confirmado manualmente');const av=AUD.filter(([k])=>(l.aud||{})[k]),an=AUD.filter(([k])=>(l.aud||{})[k]==='no');if(l.site==='has'&&av.length>=3)add(Math.round(w.problems*an.length/av.length),an.length+' de '+av.length+' itens verificados do site com problema');
+ if(l.insta==='yes')add(w.insta,'Instagram comercial ativo e verificado');
+ if(l.profile)add(w.profile,'Perfil comercial com informações incompletas');
+ if(String(l.telefone||'').trim())add(w.phone,'Telefone comercial público');
+ if(l.quote==='no')add(w.quote,'Sem canal de orçamento online (confirmado)');
+ if(+l.opp)add(Math.round(w.opp*(+l.opp)/2),'Oportunidade '+(+l.opp===2?'clara':'moderada')+' identificada');
+ if(!r.length)r.push('Nenhum critério confirmado. Informação desconhecida não gera pontos.');
+ n=Math.min(100,n);return{n,r,c:n>=70?['Quente','q']:n>=40?['Morno','m']:['Frio','f']}}
+const tag=l=>{const s=score(l);return `<span class="tag ${s.c[1]}">${s.c[0]} · ${s.n}</span>`};
+
+function render(){document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.i===view));
+ $('#app').innerHTML=view==='p'?vP():view==='l'?vL():view==='k'?vK():view==='d'?vD():view==='m'?vM():vC();if(view==='p')links();lists();if(view==='m')map()}
+const inp=(id,lb,v,t='text')=>`<label>${lb}<input id="${id}" type="${t}" value="${esc(v)}"></label>`;
+const sel=(id,lb,o,v)=>`<label>${lb}<select id="${id}">${o.map(([k,t])=>`<option value="${k}"${String(v)===k?' selected':''}>${t}</option>`).join('')}</select></label>`;
+
+function vP(){return `<div class="card"><h2>Prospectar empresas</h2><p class="mu">A pesquisa abre no Google e no Google Maps. Você escolhe as empresas e traz os dados para cá. Nada é coletado automaticamente.</p>
+<div class="g">${inp('seg','Segmento (escolha ou digite)',Q.seg||'')}${inp('kw','Palavra-chave (opcional)',Q.kw||'')}${inp('bai','Bairro ou região',Q.bai||'')}${inp('cid','Cidades (escolha ou digite; várias separadas por ponto e vírgula)',Q.cid||'')}${inp('est','Estado (escolha ou digite)',Q.est||'')}${inp('pais','País',Q.pais||'')}</div>
+<div class="row" style="margin-top:14px"><a id="gl" class="b" data-a="open" target="_blank" rel="noopener">Pesquisar no Google</a><a id="mp" class="b s" data-a="open" target="_blank" rel="noopener">Pesquisar no Maps</a></div></div>
+<div class="card"><h3>Busca automática</h3><p class="mu">Procura empresas reais no OpenStreetMap pelo segmento e pela cidade informados acima, sem chave de API. Funciona quando a página está hospedada (Vercel) ou o arquivo é aberto no computador. Usa Nominatim, Photon e OpenStreetMap. “Verificar sites e presença” roda o PageSpeed e, na Vercel, o Brave Search. Fora disso, use “Pedir a busca à Claude”.</p><button class="b" data-a="auto">Buscar empresas agora</button> <button class="b s" data-a="ver">Verificar sites e presença</button><button class="b s" data-a="ask">Pedir a busca à Claude</button> <span id="as" class="mu"></span></div><div class="card"><h3>Trazer empresas para cá</h3><div class="row" style="margin:10px 0"><button class="b" data-a="new">Adicionar uma empresa</button><label class="b s" style="margin:0">Importar CSV<input id="csv" type="file" accept=".csv" hidden></label></div>
+<label>Colar lista (uma empresa por linha: nome; telefone; site; cidade)<textarea id="paste" rows="5" placeholder="Nome da empresa; telefone; site; cidade"></textarea></label>
+<p class="mu">Site em branco fica como “Não identificado”. Duplicadas são ignoradas.</p><button class="b" data-a="paste">Importar lista</button></div>
+<div class="card"><h3>Pesquisas recentes</h3>${hist.length?`<ul class="r">${hist.map((h,i)=>`<li>${esc(h.q)} <span class="mu">(${h.d})</span> <a href="#" data-a="rep" data-i="${i}">repetir</a></li>`).join('')}</ul>`:'<p class="mu">Nenhuma pesquisa ainda. Preencha o segmento e a cidade acima.</p>'}</div>`}
+function qs(){const b=[Q.seg,Q.kw].filter(Boolean).join(' '),l=[Q.bai,Q.cid,Q.est,Q.pais].filter(Boolean).join(', ');return b+(l?' em '+l:'')}
+function links(){const q=encodeURIComponent(qs());$('#gl').href='https://www.google.com/search?q='+q;$('#mp').href='https://www.google.com/maps/search/'+q}
+
+function vL(){const cs=[...new Set(leads.map(l=>l.cidade).filter(Boolean))].sort(),t=norm(F.t);
+ const ls=leads.filter(l=>(!t||norm(l.nome).includes(t))&&(!F.c||l.cidade===F.c)&&(!F.k||score(l).c[0]===F.k)&&(!F.n||l.site==='none')&&(!F.f||l.fav));
+ return `<div class="card"><div class="g">${inp('ft','Buscar por nome',F.t)}${sel('fc','Cidade',[['','Todas'],...cs.map(c=>[c,c])],F.c)}${sel('fk','Classificação',[['','Todas'],['Quente','Quente'],['Morno','Morno'],['Frio','Frio']],F.k)}</div>
+<div class="row" style="margin-top:12px"><label><input type="checkbox" id="fn"${F.n?' checked':''}>Só sem site</label><label><input type="checkbox" id="ff"${F.f?' checked':''}>Só favoritos</label><span style="margin-left:auto" class="row"><button class="b s" data-a="new">Nova empresa</button><button class="b s" data-a="csvx">Exportar CSV</button></span></div></div>
+<div class="card tw">${ls.length?`<table><thead><tr><th></th><th>Empresa</th><th>Cidade</th><th>Telefone</th><th>Site</th><th>Pontuação</th></tr></thead><tbody>${ls.map(l=>`<tr data-a="edit" data-i="${l.id}"><td><span data-a="fav" data-i="${l.id}" style="cursor:pointer" title="Favoritar">${l.fav?'★':'☆'}</span></td><td><b>${esc(l.nome)}</b><br><span class="mu">${esc(l.segmento)}${l.nc?' · não contatar':''}</span></td><td>${esc(l.cidade)||'<span class="mu">Não identificado</span>'}</td><td>${esc(l.telefone)||'<span class="mu">Não identificado</span>'}</td><td>${{has:'Possui',none:'Sem site',unknown:'<span class="mu">Não identificado</span>'}[l.site]}</td><td>${tag(l)}</td></tr>`).join('')}</tbody></table>`:`<p>${leads.length?'Nenhum lead com esses filtros.':'Você ainda não tem leads. Use Prospectar para pesquisar e importar empresas.'}</p>`}</div>`}
+
+function vC(){const L={nosite:'Sem site confirmado',problems:'Site com problemas (ativa na Fase 2, vale 0 por enquanto)',insta:'Instagram ativo e verificado',profile:'Perfil comercial incompleto',phone:'Telefone público',quote:'Sem canal de orçamento (confirmado)',opp:'Oportunidade clara'};
+ return `<div class="card"><h2>Pontuação dos leads</h2><p class="mu">Ajuste o peso de cada critério. As notas são recalculadas na hora. Quente: 70 a 100. Morno: 40 a 69. Frio: 0 a 39. Informação desconhecida nunca soma pontos.</p><div class="row" style="margin-bottom:12px"><button class="b s" data-a="pre" data-i="0">Padrão</button><button class="b s" data-a="pre" data-i="1">Foco em quem não tem site</button></div><div class="g">${Object.keys(L).map(k=>inp('w_'+k,L[k],w[k],'number')).join('')}</div></div>
+<div class="card"><h3>Fontes e chaves</h3><p class="mu">As chaves ficam só neste navegador e são opcionais. Sem elas a busca usa Nominatim, Photon e OpenStreetMap. O Brave Search usa a variável BRAVE_API_KEY configurada na Vercel.</p><div class="g">${sel('s_ai','Provedor de IA',[['none','Nenhum'],['ollama','Ollama (local)'],['gemini','Google Gemini'],['groq','Groq'],['hf','Hugging Face']],S.ai)}${inp('s_aim','Modelo (opcional)',S.aim)}${inp('s_aik','Chave da IA',S.aik,'password')}${inp('s_ol','Endereço do Ollama',S.ol)}${inp('s_gk','Chave Geoapify',S.gk,'password')}${inp('s_psik','Chave PageSpeed',S.psik,'password')}</div></div><div class="card"><h3>Dados</h3><p class="mu">Tudo fica salvo só neste navegador. Para levar para outro lugar, exporte o CSV.</p><div class="row"><button class="b s" data-a="bk">Baixar backup (JSON)</button><label class="b s" style="margin:0">Restaurar backup<input id="bkf" type="file" accept=".json" hidden></label><button class="b d" data-a="wipe">Apagar todos os dados</button></div></div>`}
+
+function edit(id){cur=id?{...get(id)}:blank();cur._new=!id;const l=cur,d=$('#dlg');
+ d.innerHTML=`<h2>${l._new?'Nova empresa':esc(l.nome)}</h2><div class="g" style="margin-top:12px">${inp('e_nome','Nome',l.nome)}${inp('e_segmento','Segmento',l.segmento)}${inp('e_cidade','Cidade',l.cidade)}${inp('e_estado','Estado',l.estado)}${inp('e_telefone','Telefone',l.telefone)}${inp('e_siteUrl','Endereço do site',l.siteUrl)}${sel('e_site','Situação do site',[['unknown','Não identificado'],['has','Possui site'],['none','Sem site (procurei e não encontrei)']],l.site)}${inp('e_instaUrl','Instagram',l.instaUrl)}${sel('e_insta','Instagram comercial',[['unknown','Não identificado'],['yes','Ativo e verificado'],['no','Inativo ou inexistente']],l.insta)}${sel('e_quote','Canal de orçamento online',[['unknown','Não identificado'],['yes','Possui'],['no','Não possui (confirmado)']],l.quote)}${sel('e_opp','Oportunidade comercial',[['0','Nenhuma identificada'],['1','Moderada'],['2','Clara']],l.opp)}${inp('e_fonte','Fonte da informação',l.fonte)}${inp('e_data','Data da verificação',l.data,'date')}</div>
+<div class="row" style="margin:12px 0"><label><input type="checkbox" id="e_profile"${l.profile?' checked':''}>Perfil comercial incompleto</label><label><input type="checkbox" id="e_nc"${l.nc?' checked':''}>Não contatar</label></div>${inp('e_ncm','Motivo de não contatar',l.ncm)}<label style="margin-top:10px">Observações<textarea id="e_notas" rows="3">${esc(l.notas)}</textarea></label>
+<h3 style="margin-top:16px">Pipeline e lembrete</h3><div class="g">${sel('e_etapa','Etapa',ETAPAS.map(x=>[x,x]),l.etapa||'Novo lead')}${inp('e_lembrete','Lembrete de acompanhamento',l.lembrete,'date')}</div><h3 style="margin-top:16px">Auditoria do site (marque só o que você verificou)</h3><div class="g">${AUD.map(([k,t])=>sel('a_'+k,t,[['','Não verificado'],['ok','OK'],['no','Problema']],(l.aud||{})[k]||'')).join('')}</div><label style="margin-top:10px">Biografia do Instagram (cole do perfil público)<textarea id="e_bio" rows="2">${esc(l.bio)}</textarea></label><div class="card" id="sc" style="margin-top:14px"></div><div class="row"><button class="b" data-a="save">Salvar</button><button class="b s" data-a="close">Fechar</button>${l._new?'':'<button class="b s" data-a="msg">Abordagem</button><button class="b s" data-a="pmt">Prompt do site</button>'}${l._new?'':'<button class="b d" data-a="del" style="margin-left:auto">Excluir lead</button>'}</div>`;
+ upd();lists();if(!d.open)d.showModal()}
+function read(){const l={...cur};['nome','segmento','cidade','estado','telefone','siteUrl','site','instaUrl','insta','quote','opp','fonte','data','ncm','notas','etapa','lembrete','bio'].forEach(k=>l[k]=$('#e_'+k).value);l.aud={};AUD.forEach(([k])=>l.aud[k]=$('#a_'+k).value);l.profile=$('#e_profile').checked;l.nc=$('#e_nc').checked;return l}
+function upd(){const s=score(read());$('#sc').innerHTML=`<span class="sc">${s.n}</span> <span class="tag ${s.c[1]}">${s.c[0]}</span><ul class="r">${s.r.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`}
+function saveLead(){const l=read();if(!l.nome.trim())return toast('Informe o nome da empresa.');
+ const dup=leads.find(x=>x.id!==l.id&&key(x)===key(l));if(dup&&!confirm('Já existe “'+dup.nome+'” com esses dados. Salvar mesmo assim?'))return;
+ delete l._new;const i=leads.findIndex(x=>x.id===l.id);i<0?leads.unshift(l):leads[i]=l;save();$('#dlg').close();toast('Lead salvo.');render()}
+function addMany(a){let n=0,d=0;const ks=new Set(leads.map(key));a.forEach(o=>{const l={...blank(),...o};if(!l.nome)return;const k=key(l);if(ks.has(k)){d++;return}ks.add(k);leads.unshift(l);n++});save();toast(n+' importadas, '+d+' duplicadas ignoradas.');render()}
+function parseCSV(t){const rows=[];let r=[],c='',q=false;t=t.replace(/^\uFEFF/,'');const sep=(t.split('\n')[0].match(/;/g)||[]).length>(t.split('\n')[0].match(/,/g)||[]).length?';':',';
+ for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'&&t[i+1]==='"'){c+='"';i++}else if(ch==='"')q=false;else c+=ch}else if(ch==='"')q=true;else if(ch===sep){r.push(c);c=''}else if(ch==='\n'){r.push(c);rows.push(r);r=[];c=''}else if(ch!=='\r')c+=ch}
+ if(c||r.length){r.push(c);rows.push(r)}return rows.filter(x=>x.some(Boolean))}
+const COLS=['nome','segmento','cidade','estado','telefone','siteUrl','site','instaUrl','insta','profile','quote','opp','fonte','data','notas','nc','ncm'];
+function exportCSV(){if(!leads.length)return toast('Não há leads para exportar.');const e=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ const csv='\uFEFF'+[COLS.concat(['pontuacao']).join(',')].concat(leads.map(l=>COLS.map(k=>e(l[k])).concat(score(l).n).join(','))).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='leads-'+today()+'.csv';a.click()}
+
+const OSM=[['pizz','["amenity"="restaurant"]["cuisine"~"pizza"]'],['odont|dent','["amenity"="dentist"]'],['barbe|salao|cabelei|beleza','["shop"="hairdresser"]'],['academ|fitness','["leisure"="fitness_centre"]'],['oficina|mecan','["shop"="car_repair"]'],['restaur','["amenity"="restaurant"]'],['advoc','["office"="lawyer"]'],['imobil','["office"="estate_agent"]'],['padar','["shop"="bakery"]'],['farmac','["amenity"="pharmacy"]'],['lanch|hambur','["amenity"~"fast_food|restaurant"]']];
+async function auto(){const st=$('#as');if(!Q.seg||!Q.cid)return toast('Informe o segmento e a cidade.');st.textContent='Buscando…';
+ try{const sg=Q.seg.split('"').join(''),cd=Q.cid.split('"').join(''),m=OSM.find(([k])=>new RegExp(k).test(norm(sg))),f=m?m[1]:'["name"~"'+sg+'",i]';
+ const q='[out:json][timeout:60];area["name"="'+cd+'"]["boundary"="administrative"]->.a;nwr'+f+'(area.a);out center tags 300;';
+ const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});if(!r.ok)throw 0;
+ const j=await r.json(),a=j.elements.filter(e=>e.tags&&e.tags.name).map(e=>{const t=e.tags,s=t.website||t['contact:website']||'';return{nome:t.name,segmento:sg,cidade:cd,estado:Q.est||'',telefone:t.phone||t['contact:phone']||t['contact:mobile']||'',siteUrl:s,site:s?'has':'unknown',instaUrl:t['contact:instagram']||'',fonte:'OpenStreetMap (busca automática)',data:today(),notas:s?'':'Site não consta no OpenStreetMap. Confirmar no Google antes de marcar como sem site.'}});
+ if(!a.length){st.textContent='Nenhuma empresa encontrada para essa busca.';return}
+ hist.unshift({q:qs(),d:today()});addMany(a)}
+ catch(e){st.textContent='';toast('A busca automática não funcionou aqui. Baixe o arquivo e abra no seu computador.')}}
+const J=async(u,o)=>{const r=await fetch(u,o);if(!r.ok)throw new Error(r.status);return r.json()};
+async function geo(c,e,p){const q=encodeURIComponent([c,e,p].filter(Boolean).join(', '));
+ try{const r=(await J('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+q))[0];if(r)return r.boundingbox.map(Number)}catch(x){}
+ try{const f=(await J('https://photon.komoot.io/api/?limit=1&q='+q)).features[0];if(f&&f.properties.extent){const [w1,n1,e1,s1]=f.properties.extent;return [s1,n1,w1,e1]}}catch(x){}
+ if(S.gk)try{const b=(await J('https://api.geoapify.com/v1/geocode/search?format=json&limit=1&text='+q+'&apiKey='+S.gk)).results[0].bbox;return [Math.min(b.lat1,b.lat2),Math.max(b.lat1,b.lat2),Math.min(b.lon1,b.lon2),Math.max(b.lon1,b.lon2)]}catch(x){}
+ return null}
+async function ovp(q){for(const u of ['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter']){try{return await J(u,{method:'POST',body:'data='+encodeURIComponent(q)})}catch(x){}}throw 0}
+async function one(){const st=$('#as');st.textContent='Localizando '+Q.cid+'…';
+ try{const sg=Q.seg.split('"').join(''),cd=Q.cid.split('"').join(''),m=OSM.find(([k])=>new RegExp(k).test(norm(sg))),f=m?m[1]:'["name"~"'+sg+'",i]',b=await geo(cd,Q.est,Q.pais);st.textContent='Buscando empresas…';
+ const q='[out:json][timeout:60];'+(b?'':'area["name"="'+cd+'"]["boundary"="administrative"]->.a;')+'nwr'+f+(b?'('+b[0]+','+b[2]+','+b[1]+','+b[3]+')':'(area.a)')+';out center tags 300;';
+ const j=await ovp(q),a=j.elements.filter(e=>e.tags&&e.tags.name).map(e=>{const t=e.tags,s=t.website||t['contact:website']||'',c=e.center||e;return{nome:t.name,segmento:sg,cidade:cd,estado:Q.est||'',telefone:t.phone||t['contact:phone']||t['contact:mobile']||'',siteUrl:s,site:s?'has':'unknown',instaUrl:t['contact:instagram']||'',lat:c.lat,lon:c.lon,fonte:'OpenStreetMap (busca automática)',data:today(),notas:s?'':'Site não consta no OpenStreetMap. Use “Verificar sites e presença” ou confirme no Google.'}});
+ return a}
+ catch(e){throw e}}
+async function auto(){const st=$('#as');if(!Q.seg||!Q.cid)return toast('Informe o segmento e a cidade.');
+ const orig=Q.cid,cs=orig.split(';').map(x=>x.trim()).filter(Boolean),all=[],fail=[];
+ for(let i=0;i<cs.length;i++){Q.cid=cs[i];try{all.push(...await one())}catch(e){fail.push(cs[i])}if(i<cs.length-1)await new Promise(r=>setTimeout(r,1100))}
+ Q.cid=orig;st.textContent='';
+ if(!all.length){if(fail.length)toast('A busca falhou em: '+fail.join('; ')+'. No claude.ai ela é bloqueada: hospede o arquivo na Vercel.');else st.textContent='Nenhuma empresa encontrada. Tente outro segmento ou use “Pedir a busca à Claude”.';return}
+ hist.unshift({q:qs(),d:today()});addMany(all);
+ if(fail.length)setTimeout(()=>{const s=$('#as');if(s)s.textContent='Falhou em: '+fail.join('; ')},0)}
+async function verify(){const st=$('#as');let n=0;const add=(l,t)=>{l.notas=(l.notas?l.notas+NL:'')+t};
+ for(const l of leads){if(n>=12)break;if(l.nc)continue;const u=l.siteUrl?(/^https?:/.test(l.siteUrl)?l.siteUrl:'https://'+l.siteUrl):'';
+ if(u&&!l.psi){n++;st.textContent='Analisando '+l.nome+'…';l.psi=1;
+ try{const r=(await J('https://www.googleapis.com/pagespeedonline/v5/runPagespeed?strategy=mobile&category=performance&category=seo&url='+encodeURIComponent(u)+(S.psik?'&key='+S.psik:''))).lighthouseResult,a=r.audits,sc=x=>a[x]&&a[x].score===1?'ok':'no';
+ l.aud={...(l.aud||{}),https:sc('is-on-https'),mobile:sc('viewport'),meta:sc('document-title')==='ok'&&sc('meta-description')==='ok'?'ok':'no'};if(!l.bv)l.site='has';
+ add(l,'PageSpeed (celular, '+today()+'): desempenho '+Math.round(r.categories.performance.score*100)+', SEO '+Math.round(r.categories.seo.score*100)+'.')}
+ catch(x){add(l,'PageSpeed não conseguiu analisar o site agora. Pode estar fora do ar ou a cota acabou.')}}
+ else if(!u&&!l.bv){n++;l.bv=1;st.textContent='Buscando '+l.nome+'…';
+ try{const r=(await J('/api/brave?q='+encodeURIComponent(l.nome+' '+l.cidade))).web.results,tk=norm(l.nome).slice(0,6),bad=['facebook','instagram','tripadvisor','wanderlog','foursquare','google','ifood','yelp','guiamais','apontador','linkedin','youtube','tiktok'],ok=x=>norm(x.url+x.title).includes(tk),h=r.find(x=>ok(x)&&!bad.some(d=>x.url.includes(d))),ig=r.find(x=>ok(x)&&x.url.includes('instagram.com/'));
+ if(h){l.siteUrl=h.url;add(l,'Possível site (Brave Search): '+h.url+'. Validar antes de usar.')}else add(l,'Brave Search não achou site com esse nome.');if(ig&&!l.instaUrl){l.instaUrl=ig.url;add(l,'Possível Instagram (Brave Search). Validar.')}}
+ catch(x){add(l,'Brave Search indisponível (precisa da função /api/brave na Vercel).')}}}
+ save();render();toast(n?n+' empresas verificadas. Clique para rodar de novo nas próximas.':'Nada novo para verificar.')}
+async function ai(p){const k=S.aik,m=S.aim;
+ if(S.ai==='ollama')return (await J((S.ol.endsWith('/')?S.ol.slice(0,-1):S.ol)+'/api/generate',{method:'POST',body:JSON.stringify({model:m||'llama3.2',prompt:p,stream:false})})).response;
+ if(S.ai==='gemini'){const r=await J('https://generativelanguage.googleapis.com/v1beta/models/'+(m||'gemini-2.0-flash')+':generateContent?key='+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:p}]}]})});return r.candidates[0].content.parts[0].text}
+ const r=await J(S.ai==='groq'?'https://api.groq.com/openai/v1/chat/completions':'https://router.huggingface.co/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+k},body:JSON.stringify({model:m||(S.ai==='groq'?'llama-3.3-70b-versatile':'meta-llama/Llama-3.1-8B-Instruct'),messages:[{role:'user',content:p}]})});return r.choices[0].message.content}
+function vM(){const n=leads.filter(l=>l.lat).length;return `<div class="card"><h3>Mapa de leads</h3><p class="mu">${n?n+' leads com localização.':'Nenhum lead com localização ainda. Leads da busca automática trazem coordenadas.'}</p><div id="map" style="height:480px;border-radius:8px"></div></div>`}
+function map(){if(!window.L){$('#map').innerHTML='<p class="mu" style="padding:12px">Biblioteca de mapas indisponível neste ambiente.</p>';return}
+ const ls=leads.filter(l=>l.lat),m=L.map('map').setView([-14,-52],4);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(m);
+ if(ls.length)m.fitBounds(ls.map(l=>[l.lat,l.lon]),{maxZoom:14,padding:[30,30]});ls.forEach(l=>L.marker([l.lat,l.lon]).addTo(m).bindPopup('<b>'+esc(l.nome)+'</b><br>'+score(l).c[0]+' · '+score(l).n))}
+function lists(){const L={seg:'dl_s',cid:'dl_c',est:'dl_e',e_segmento:'dl_s',e_cidade:'dl_c',e_estado:'dl_e',e_fonte:'dl_f'};for(const k in L){const x=document.getElementById(k);if(x)x.setAttribute('list',L[k])}}
+function vK(){if(!leads.length)return '<div class="card"><p>O pipeline mostra seus leads por etapa. Cadastre empresas em Prospectar.</p></div>';
+ return '<div class="kb">'+ETAPAS.map((e,x)=>{const ls=leads.filter(l=>(l.etapa||'Novo lead')===e);return `<div class="kc"><b>${e}</b> <span class="mu">${ls.length}</span>${ls.map(l=>`<div class="card"><b data-a="edit" data-i="${l.id}" style="cursor:pointer">${esc(l.nome)}</b><br>${tag(l)}<div class="row" style="margin-top:8px">${x?`<button class="b s" data-a="mv" data-i="${l.id}" data-d="-1" aria-label="Etapa anterior">←</button>`:''}${x<ETAPAS.length-1?`<button class="b s" data-a="mv" data-i="${l.id}" data-d="1" aria-label="Próxima etapa">→</button>`:''}</div></div>`).join('')||'<p class="mu">Vazio</p>'}</div>`}).join('')+'</div>'}
+const cnt=(f,p=()=>true)=>leads.filter(p).reduce((o,l)=>{const k=f(l)||'Não identificado';o[k]=(o[k]||0)+1;return o},{});
+const bars=(t,o)=>{const m=Math.max(1,...Object.values(o)),e=Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,6);return `<div class="card"><h3>${t}</h3>${e.length?e.map(([k,v])=>`<div class="row" style="margin-top:8px;flex-wrap:nowrap"><span style="width:120px" class="mu">${esc(k)}</span><span style="flex:1"><span class="bar" style="width:${v/m*100}%"></span></span><b>${v}</b></div>`).join(''):'<p class="mu">Sem dados ainda.</p>'}</div>`};
+function vD(){if(!leads.length)return '<div class="card"><h2>Painel</h2><p>Os indicadores aparecem aqui quando você tiver leads. Comece em Prospectar.</p></div>';
+ const c=p=>leads.filter(p).length,s=l=>score(l).c[0],et=l=>l.etapa||'Novo lead',ct=c(l=>!['Novo lead','Em análise','Qualificado'].includes(et(l))),rs=c(l=>['Em negociação','Cliente fechado'].includes(et(l))),fc=c(l=>et(l)==='Cliente fechado');
+ const k=[['Leads',leads.length],['Quentes',c(l=>s(l)==='Quente')],['Mornos',c(l=>s(l)==='Morno')],['Frios',c(l=>s(l)==='Frio')],['Sem site',c(l=>l.site==='none')],['Com site',c(l=>l.site==='has')],['Com Instagram',c(l=>l.insta==='yes')],['Contatos feitos',ct],['Responderam',rs],['Fechados',fc],['Conversão',ct?Math.round(fc/ct*100)+'%':'Não identificado']];
+ const rm=leads.filter(l=>l.lembrete&&l.lembrete<=today()).sort((a,b)=>a.lembrete<b.lembrete?-1:1);
+ return `<div class="g">${k.map(([a,b])=>`<div class="card" style="margin:0"><span class="mu">${a}</span><div class="kn">${b}</div></div>`).join('')}</div><div class="card" style="margin-top:16px"><h3>Lembretes de hoje e atrasados</h3>${rm.length?`<ul class="r">${rm.map(l=>`<li><a href="#" data-a="edit" data-i="${l.id}">${esc(l.nome)}</a> <span class="mu">(${l.lembrete})</span></li>`).join('')}</ul>`:'<p class="mu">Nenhum lembrete vencido.</p>'}</div>${bars('Leads por segmento',cnt(l=>l.segmento))}${bars('Leads por cidade',cnt(l=>l.cidade))}${bars('Leads por classificação',cnt(s))}${bars('Oportunidades da região: segmentos com mais empresas sem site',cnt(l=>l.segmento,l=>l.site==='none'))}<p class="mu">Responderam e Contatos feitos são calculados pela etapa do pipeline.</p>`}
+const DIR=[['odont|clinic|dent','estética premium, confiança e sofisticação, tons claros e fotos reais da equipe'],['pizz|restaur|lanch|hambur|padar|cafe','identidade gastronômica, imagens apetitosas e pedido rápido pelo WhatsApp'],['barbe','identidade masculina, personalidade forte e agendamento em destaque'],['advoc','autoridade, elegância e credibilidade, com tipografia clássica'],['academ|fitness|crossfit','energia, motivação e conversão para planos e aula experimental'],['imobil|corret','sofisticação, imóveis em destaque e captação de interessados']];
+function msgs(l){if(l.nc)return 'Este lead está marcado como “Não contatar”'+(l.ncm?' ('+l.ncm+')':'')+'. Nenhuma mensagem foi gerada.';
+ const op=[];if(l.site==='none')op.push('não encontrei um site da empresa');AUD.filter(([k])=>(l.aud||{})[k]==='no').slice(0,2).forEach(([k,t])=>op.push('o site pode melhorar em '+t.toLowerCase()));if(l.quote==='no')op.push('não vi um canal de orçamento online');
+ if(!op.length)return 'Nenhuma oportunidade confirmada nesta ficha. Confirme se a empresa tem site ou preencha a auditoria antes de abordar.';
+ const o=op.slice(0,2).join(' e '),n=l.nome,c=l.cidade?' em '+l.cidade:'',nao=NL+'Se preferir não receber mensagens, é só me avisar.',as=NL+NL+'Matheus, MFI Nexora Digital Studio';
+ return ['WHATSAPP','Olá! Tudo bem? Estava conhecendo a '+n+c+' e percebi que '+o+'. Trabalho com sites e landing pages e posso mostrar uma ideia de como isso ajudaria a receber mais pedidos de orçamento. Posso te enviar?'+nao+as,'','INSTAGRAM','Olá! Gostei do perfil da '+n+'. Percebi que '+o+'. Posso te mostrar uma ideia rápida de site para receber mais clientes?'+nao,'','E-MAIL','Assunto: Ideia de site para a '+n+NL+NL+'Olá! Estudei a presença digital da '+n+c+' e percebi que '+o+'. Preparei uma ideia de site com apresentação dos serviços e pedido de orçamento pelo WhatsApp. Posso enviar?'+nao+as,'','ACOMPANHAMENTO','Oi! Passando para saber se você viu minha mensagem sobre a '+n+'. Posso mandar a ideia do site sem compromisso?'+nao,'','SEGUNDA TENTATIVA','Olá! Volto a falar sobre o site da '+n+'. Se não for o momento, sem problema: me avise e não insisto mais.','','OBJEÇÕES','“Já tenho Instagram”: o Instagram mostra o trabalho; o site ajuda quem pesquisa no Google a encontrar a empresa e pedir orçamento em um clique.'+NL+'“Está caro”: posso montar uma proposta enxuta, por etapas.'+NL+'“Não preciso agora”: sem problema, deixo a ideia com você e retomo depois.','','FECHAMENTO','Se fizer sentido, definimos escopo e prazo e já começo o layout.'].join(NL)}
+function pmt(l){const v=(x,p)=>x&&String(x).trim()?x:(p||'[preencher]'),pr=AUD.filter(([k])=>(l.aud||{})[k]==='no').map(x=>x[1]),d=DIR.find(([k])=>new RegExp(k).test(norm(l.segmento)));
+ return ['PROMPT MESTRE: SITE PARA '+v(l.nome).toUpperCase(),'','Crie um site ou landing page profissional, exclusivo e em português brasileiro para a empresa abaixo. Use somente as informações fornecidas. O que estiver como [preencher] deve ser confirmado com o cliente. Não invente depoimentos, números, endereços ou prêmios.','','A. IDENTIDADE','- Empresa: '+v(l.nome),'- Segmento: '+v(l.segmento),'- Cidade: '+v(l.cidade)+(l.estado?'/'+l.estado:''),'- Telefone/WhatsApp: '+v(l.telefone),'- Instagram: '+v(l.instaUrl),'- Biografia do Instagram: '+v(l.bio),'- Público-alvo, posicionamento e diferenciais: [preencher]','','B. ESTRATÉGIA','- Objetivo: gerar pedidos de orçamento'+(l.site==='none'?' (a empresa não tem site identificado)':'')+'.',pr.length?'- Problemas do site atual a resolver: '+pr.join(', ')+'.':'- Site atual: '+(l.site==='has'?'existe, ainda sem auditoria completa':'não identificado')+'.','- Proposta de valor e principais dores do público: [preencher]','','C. ARQUITETURA','- Cabeçalho com WhatsApp, hero com chamada principal, serviços, diferenciais, FAQ, formulário de orçamento e rodapé. Portfólio e depoimentos só se houver material real.','','D. DESIGN','- Direção: '+(d?d[1]:'identidade coerente com o segmento, visual limpo e foco em contato rápido')+'.','- Paleta, tipografia, botões e cards coerentes com essa direção; evitar aparência de template genérico.','','E. EXPERIÊNCIA E CONVERSÃO','- Mobile-first, acessível, rápido, com botão fixo de WhatsApp e formulário curto.','','F. SEO','- Estrutura semântica, títulos e meta description com termo do segmento e cidade, SEO local e imagens otimizadas.','','G. IMPLEMENTAÇÃO','- Next.js ou HTML estático, componentes reutilizáveis, boas práticas de segurança e instruções de publicação.'].join(NL)}
+function showOut(k,l){const t=k==='msg'?msgs(l):pmt(l),p=String(l.telefone||'').replace(/\D/g,''),wa=p.length>=10&&!l.nc&&k==='msg'?`<a class="b s" target="_blank" rel="noopener" href="https://wa.me/${p.length<=11?'55'+p:p}">Abrir WhatsApp</a>`:'';
+ $('#dlg').innerHTML=`<h2>${k==='msg'?'Abordagem comercial':'Prompt mestre do site'}</h2><p class="mu">Texto montado por modelo, sem IA, só com os dados da ficha. Revise antes de usar. Nada é enviado automaticamente.</p><textarea id="o_t" rows="16">${esc(t)}</textarea><div class="row" style="margin-top:12px"><button class="b" data-a="cp">Copiar</button><button class="b s" data-a="dl">Baixar TXT</button><button class="b s" data-a="ai">Melhorar com IA</button>${wa}<button class="b s" data-a="edit" data-i="${l.id}">Voltar à ficha</button></div>`}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,i=t.dataset.i;
+ if(a==='fav'){e.stopPropagation();const l=get(i);l.fav=!l.fav;save();return render()}
+ if(a==='rep'){e.preventDefault();const h=hist[i];Q={seg:h.q};render();return toast('Ajuste os campos para repetir a pesquisa.')}
+ if(a==='v'){view=i;render()}
+ else if(a==='open'){if(!qs())e.preventDefault(),toast('Informe ao menos o segmento.');else{hist.unshift({q:qs(),d:today()});hist=hist.slice(0,15);save()}}
+ else if(a==='new')edit();else if(a==='edit')edit(i);else if(a==='save')saveLead();else if(a==='close')$('#dlg').close();
+ else if(a==='del'){if(confirm('Excluir este lead e todos os dados dele?')){leads=leads.filter(l=>l.id!==cur.id);save();$('#dlg').close();render()}}
+ else if(a==='csvx')exportCSV();
+ else if(a==='auto')auto();
+ else if(a==='ver')verify();
+ else if(a==='ai'){if(S.ai==='none')return toast('Escolha um provedor de IA na aba Pontuação, em Fontes e chaves.');const x=$('#o_t');toast('Gerando com IA…');ai('Reescreva o texto abaixo em português do Brasil, com naturalidade, mantendo somente os fatos presentes e sem inventar nada:'+NL+NL+x.value).then(r=>{x.value=r;toast('Texto refinado por IA ('+S.ai+'). Revise antes de usar.')}).catch(()=>toast('A IA não respondeu. Confira a chave, o modelo e o endereço.'))}
+ else if(a==='pre'){w=i==='1'?{...W0,nosite:45,problems:10,quote:5,opp:5}:{...W0};save();render()}
+ else if(a==='ask'){if(!Q.seg||!Q.cid)return toast('Escolha o segmento e a cidade.');const tx='Claude, pesquise na web: '+qs()+'. Para cada empresa real encontrada, verifique se tem site e Instagram. Responda só com uma linha por empresa neste formato: nome; telefone; site; cidade. Deixe em branco o que não achar, sem inventar.',z=document.createElement('textarea');z.value=tx;document.body.appendChild(z);z.select();let ok=false;try{ok=document.execCommand('copy')}catch(err){}z.remove();toast(ok?'Pedido copiado. Cole no chat com a Claude.':tx)}
+ else if(a==='mv'){const l=get(i),x=ETAPAS.indexOf(l.etapa||'Novo lead')+ +t.dataset.d;if(x>=0&&x<ETAPAS.length){l.etapa=ETAPAS[x];save();render()}}
+ else if(a==='msg'||a==='pmt'){const l=read();if(!l.nome.trim())return toast('Informe o nome da empresa.');delete l._new;const j=leads.findIndex(x=>x.id===l.id);j<0?leads.unshift(l):leads[j]=l;save();cur=l;showOut(a,l)}
+ else if(a==='cp'){const x=$('#o_t');x.select();let ok=false;try{ok=document.execCommand('copy')}catch(err){}toast(ok?'Copiado.':'Selecione o texto e copie manualmente.')}
+ else if(a==='dl'||a==='bk'){const bk=a==='bk',b=new Blob([bk?JSON.stringify({leads,hist,w}):$('#o_t').value],{type:bk?'application/json':'text/plain'}),z=document.createElement('a');z.href=URL.createObjectURL(b);z.download=(bk?'backup-leads-':'texto-')+today()+(bk?'.json':'.txt');z.click()}
+ else if(a==='paste'){const v=$('#paste').value.trim();if(!v)return toast('Cole ao menos uma linha.');addMany(v.split('\n').map(x=>x.split(/;|\t/).map(s=>s.trim())).map(([nome,telefone,siteUrl,cidade])=>({nome,telefone:telefone||'',siteUrl:siteUrl||'',site:siteUrl?'has':'unknown',cidade:cidade||Q.cid||'',segmento:Q.seg||'',estado:Q.est||'',fonte:'Lista colada',data:today()})));$('#paste').value=''}
+ else if(a==='wipe'&&confirm('Apagar todos os leads e pesquisas deste navegador?')){leads=[];hist=[];save();render()}});
+document.addEventListener('input',e=>{const id=e.target.id||'';
+ if(['seg','kw','bai','cid','est','pais'].includes(id)){Q[id]=e.target.value;links()}
+ else if(id.startsWith('e_')||id.startsWith('a_'))upd();
+ else if(id.startsWith('s_')){S[id.slice(2)]=e.target.value;save()}
+ else if(id.startsWith('w_')){const v=parseInt(e.target.value,10);w[id.slice(2)]=v>=0?Math.min(100,v):0;save()}});
+document.addEventListener('change',e=>{const id=e.target.id;
+ if(id==='csv'){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const rows=parseCSV(String(r.result)),h=rows.shift().map(x=>x.trim());
+  if(!h.includes('nome'))return toast('O CSV precisa ter a coluna “nome”.');
+  addMany(rows.map(x=>{const o={};h.forEach((k,j)=>{if(COLS.includes(k))o[k]=x[j]??''});o.profile=o.profile==='true';o.nc=o.nc==='true';o.opp=o.opp||'0';o.site=o.site||(o.siteUrl?'has':'unknown');o.insta=o.insta||'unknown';o.quote=o.quote||'unknown';o.fonte=o.fonte||'Importação CSV';o.data=o.data||today();return o}))};r.readAsText(f)}
+ else if(id==='bkf'){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(String(r.result));if(!Array.isArray(s.leads))throw 0;if(!confirm('Substituir os dados atuais pelo backup?'))return;leads=s.leads;hist=s.hist||[];w={...W0,...(s.w||{})};save();render();toast('Backup restaurado.')}catch(x){toast('Arquivo de backup inválido.')}};r.readAsText(f)}
+ else if(id==='ft'||id==='fc'||id==='fk'){F[{ft:'t',fc:'c',fk:'k'}[id]]=e.target.value;render()}
+ else if(id==='fn'||id==='ff'){F[id==='fn'?'n':'f']=e.target.checked;render()}});
+$('#dlg').addEventListener('input',()=>{});
+render();
+</script>
+</body>
+</html>

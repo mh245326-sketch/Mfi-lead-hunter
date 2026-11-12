@@ -1,0 +1,31 @@
+MFI LEAD HUNTER AI
+
+ARQUIVOS
+- index.html     Aplicativo completo (prospecção, leads, auditoria, abordagem, prompt do site, pipeline, painel, mapa).
+- api/brave.js   Função da Vercel para o Brave Search (opcional).
+
+COMO PUBLICAR NA VERCEL
+1. Descompacte o ZIP.
+2. Envie a pasta mfi-lead-hunter para a Vercel (pelo painel, pela CLI ou por um repositório no GitHub).
+3. Opcional: no painel da Vercel, em Settings > Environment Variables, crie BRAVE_API_KEY com a sua chave do Brave Search. Sem ela, só a busca de sites pelo Brave não funciona.
+
+COMO USAR SEM PUBLICAR
+Abra o index.html no navegador do computador. A busca automática funciona assim também.
+Dentro do claude.ai a busca automática é bloqueada.
+
+BUSCA AUTOMÁTICA
+Em Prospectar, escolha ou digite o segmento e as cidades (várias separadas por ponto e vírgula) e clique em "Buscar empresas agora".
+Fontes: Nominatim, Photon, Geoapify (com chave) e Overpass/OpenStreetMap.
+A cobertura do OpenStreetMap varia de lugar para lugar.
+Empresa sem site no mapa fica como "Não identificado" até ser confirmada.
+
+CHAVES OPCIONAIS (aba Pontuação > Fontes e chaves)
+Geoapify, PageSpeed e provedor de IA (Ollama, Gemini, Groq ou Hugging Face).
+As chaves ficam só no navegador de quem usa.
+
+DADOS
+Os leads ficam salvos no navegador. Use o backup em JSON (aba Pontuação) e a exportação em CSV (aba Meus leads).
+
+NÃO INCLUÍDO NESTA VERSÃO
+Lighthouse local, Wappalyzer, Common Crawl, GeoNames, Wikipedia, Internet Archive, OSRM, exportação em PDF,
+análise de concorrentes e fila de busca em lote.
